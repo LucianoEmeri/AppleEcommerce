@@ -59,7 +59,7 @@ const ProfilePage = () => {
                         </li>
                         <li className="flex justify-between flex-wrap">
                             <span className="font-medium">Fecha de Registro:</span>
-                            <span>{userData?.user?.registrationDate || "No disponible"}</span>
+                            <span>No disponible</span>
                         </li>
                     </ul>
                 </div>

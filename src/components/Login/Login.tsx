@@ -2,7 +2,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { login } from '@/helpers/auth.helper';
 import { validateLoginForm } from '@/helpers/validate';
-import { ILoginError, ILoginProps } from '@/interfaces/Types';
+import { ILoginError, ILoginProps, IUserSession } from '@/interfaces/Types';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
@@ -14,7 +14,7 @@ const Login = () => {
         password: "",
     };
     const [dataUser, setDataUser] = useState<ILoginProps>(initialState);
-    const {setUserData} = useAuth()
+    const { setUserData } = useAuth();
     const [errors, setErrors] = useState<ILoginError>(initialState);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -25,22 +25,20 @@ const Login = () => {
             [name]: value
         });
 
-        const newErrors = { ...errors };
-        if (name === 'email') {
-            newErrors.email = validateLoginForm({ ...dataUser, email: value }).email;
-        } else if (name === 'password') {
-            newErrors.password = validateLoginForm({ ...dataUser, password: value }).password;
-        }
+        const newErrors = validateLoginForm({
+            ...dataUser,
+            [name]: value
+        });
         setErrors(newErrors);
     };
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsSubmitted(true);
-        const errors = validateLoginForm(dataUser);
-        setErrors(errors);
+        const formErrors = validateLoginForm(dataUser);
+        setErrors(formErrors);
 
-        if (Object.values(errors).some(error => error)) {
+        if (Object.values(formErrors).some(error => error)) {
             Swal.fire({
                 title: "Error",
                 text: "Por favor, corrige los errores en el formulario.",
@@ -60,8 +58,8 @@ const Login = () => {
 
         try {
             const response = await login(dataUser);
-            const {token, user} = response;
-            setUserData({token, user})
+            const { token, user }: IUserSession = response; // Asegúrate de que el tipo sea IUserSession
+            setUserData({ token, user });
             Swal.fire({
                 title: "Has iniciado sesión correctamente",
                 text: "Serás redirigido a la página de inicio.",

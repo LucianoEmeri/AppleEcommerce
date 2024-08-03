@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
@@ -21,7 +21,7 @@ const config: Config = {
   },
   darkMode: "class",
   plugins: [
-    function ({ addUtilities }) {
+    function({ addUtilities }: { addUtilities: (utilities: object, variants?: string[]) => void }) {
       const newUtilities = {
         '.text-shadow-1': {
           textShadow: '1px 1px 2px black',
@@ -31,7 +31,7 @@ const config: Config = {
       addUtilities(newUtilities, ['responsive', 'hover']);
     },
     require('flowbite/plugin'),
-    require("tw-elements/plugin.cjs"),
+    require('tw-elements/plugin'),
   ],
 };
 

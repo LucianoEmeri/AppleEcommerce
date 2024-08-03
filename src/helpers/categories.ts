@@ -1,12 +1,12 @@
 import ICategory from "@/interfaces/ICategory";
 
 const categoriesToPreload: ICategory[] = [
-    { name: 'iPhone', id: 1 },
-    { name: 'Mac', id: 2 },
-    { name: 'iPad', id: 3 },
-    { name: 'Watch', id: 4 },
-    { name: 'AirPods', id: 5 },
-    { name: 'Accesorios', id: 6 }
+    { id: 1, name: 'iPhone' },
+    { id: 2, name: 'Mac' },
+    { id: 3, name: 'iPad' },
+    { id: 4, name: 'Watch' },
+    { id: 5, name: 'AirPods' },
+    { id: 6, name: 'Accesorios' }
 ];
 
 export default categoriesToPreload;

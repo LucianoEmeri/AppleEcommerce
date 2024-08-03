@@ -1,4 +1,5 @@
-"use client";
+'use client';
+
 import React, { useState, useEffect, useRef } from "react";
 import Logo from "@/assets/Logo.png";
 import Link from "next/link";
@@ -7,25 +8,16 @@ import Profile from "@/assets/profile.png";
 import Menu from "@/assets/menu.png";
 import SearchIcon from "@/assets/search-icon.png";
 import LoginIcon from "@/assets/login.png";
-import categoriesToPreload from "@/helpers/categories";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-
-const products = [
-    { id: 1, name: 'iPhone', categoryId: 1 },
-    { id: 2, name: 'Mac', categoryId: 2 },
-    { id: 3, name: 'iPad', categoryId: 3 },
-    { id: 4, name: 'Watch', categoryId: 4 },
-    { id: 5, name: 'AirPods', categoryId: 5 },
-    { id: 6, name: 'Accesorios', categoryId: 6 },
-];
+import IProduct from '@/interfaces/IProduct'; // Asegúrate de importar la interfaz correcta
 
 const Navbar = () => {
-    const { userData } = useAuth();
+    const { userData, categories, products } = useAuth();
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filteredProducts, setFilteredProducts] = useState(products);
+    const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
     const [selectedProductIndex, setSelectedProductIndex] = useState(-1);
     const [showCategories, setShowCategories] = useState(window.innerWidth >= 720);
     const searchDropdownRef = useRef<HTMLDivElement>(null);
@@ -47,7 +39,8 @@ const Navbar = () => {
     }, []);
 
     useEffect(() => {
-        if (searchTerm) {
+        if (searchTerm && products) {
+            // Lógica para filtrar productos
             const results = products.filter(product =>
                 product.name.toLowerCase().includes(searchTerm.toLowerCase())
             );
@@ -55,7 +48,7 @@ const Navbar = () => {
         } else {
             setFilteredProducts([]);
         }
-    }, [searchTerm]);
+    }, [searchTerm, products]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -74,15 +67,14 @@ const Navbar = () => {
         setSearchTerm(event.target.value);
     };
 
-    const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSearchSubmit = (searchTerm: string) => {
         if (searchTerm) {
             window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
         }
     };
 
     const handleSearchClick = () => {
-        handleSearchSubmit({ preventDefault: () => {} } as React.FormEvent<HTMLFormElement>);
+        handleSearchSubmit(searchTerm);
     };
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -98,7 +90,7 @@ const Navbar = () => {
             if (selectedProduct) {
                 window.location.href = `/products/${selectedProduct.id}`;
             } else {
-                handleSearchSubmit(event as React.FormEvent<HTMLFormElement>);
+                handleSearchSubmit(searchTerm);
             }
         }
     };
@@ -119,7 +111,7 @@ const Navbar = () => {
                 </Link>
 
                 <div className="relative flex-1 max-w-md mx-4">
-                    <form onSubmit={handleSearchSubmit} className="relative">
+                    <form onSubmit={(e) => e.preventDefault()} className="relative">
                         <input
                             type="text"
                             placeholder="Buscar un producto..."
@@ -208,8 +200,8 @@ const Navbar = () => {
 
             {showCategories && (
                 <div className="w-full flex flex-row items-center gap-4 justify-around mt-4 text-white">
-                    {categoriesToPreload && categoriesToPreload.length > 0 ? (
-                        categoriesToPreload.map((category) => (
+                    {categories && categories.length > 0 ? (
+                        categories.map((category) => (
                             <Link
                                 key={category.id}
                                 href={`/products/${category.id}`}

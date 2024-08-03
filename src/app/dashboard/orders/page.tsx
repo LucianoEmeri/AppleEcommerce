@@ -1,50 +1,22 @@
 'use client';
 
-import { getOrders } from '@/helpers/orders.helper';
-import { IOrder } from '@/interfaces/Types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { useAuth } from "@/context/AuthContext";
+import React, { useEffect } from 'react';
 import Swal from "sweetalert2";
+import { useAuth } from '@/context/AuthContext'; // Importa el contexto
 
 const Orders = () => {
-  const { userData, setOrders, getToken } = useAuth();  // Usar AuthContext para obtener userData y getToken
-  const [orders, setLocalOrders] = useState<IOrder[]>([]);
+  const { userData, orders, removeOrder } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!userData) {
-      router.push('/');
-    } else {
-      fetchData();
+      router.push("/login");
     }
   }, [userData, router]);
 
-  const fetchData = async () => {
-    const token = getToken();
-    if (token) {
-      try {
-        const ordersResponse = await getOrders(token);
-        console.log("Orders response:", ordersResponse);  // Depuración
-        setLocalOrders(ordersResponse);
-        setOrders(ordersResponse);  // Actualizar el contexto si es necesario
-      } catch (error) {
-        console.error("Error al obtener las órdenes:", error);
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudieron obtener las órdenes. Inténtalo de nuevo más tarde.',
-          icon: 'error',
-          confirmButtonText: 'Aceptar',
-          confirmButtonColor: '#4A1D96',
-          background: 'rgba(0, 0, 0, 0.9)',
-          color: '#f3f4f6'
-        });
-      }
-    }
-  }
-
-  const handleCancelOrder = (orderId: number) => {  // Cambiar `orderId` a tipo `number`
+  const handleCancelOrder = (orderId: number) => {
     Swal.fire({
       title: `¿Estás seguro de que deseas cancelar la orden ${orderId}?`,
       icon: "question",
@@ -60,8 +32,8 @@ const Orders = () => {
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        // Simula la eliminación de la orden
-        setLocalOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
+        // Elimina la orden usando el contexto
+        removeOrder(orderId);
 
         Swal.fire({
           title: '¡Orden cancelada!',
@@ -78,7 +50,7 @@ const Orders = () => {
 
   return (
     <div className="bg-gray-50 p-6 rounded-xl">
-      {orders && orders.length > 0 ? (
+      {orders.length > 0 ? (
         orders.map((order) => (
           <div key={order.id} className="bg-white shadow-lg rounded-lg p-4 mb-4 flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0 flex-1">

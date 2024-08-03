@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import 'flowbite/dist/flowbite.css';
+
+/* Cursor para links del footer */
+
+.cursor-pointer-custom {
+    cursor: pointer;
+}
+
+/* Elimina el padding derecho del body cuando se muestra el alert */
+.swal2-shown {
+    padding-right: 0 !important;
+}
+
+
+/* -----> Efectos del carrito <----- */
+
+.marquee-wrapper {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.marquee-content {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    width: 200%;
+    animation: marquee 15s linear infinite;
+}
+
+.marquee-content span {
+    display: inline-block;
+    margin-right: 2rem; 
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%); 
+    }
+}
+
+
+
+/* -----> Estilos para la barra de desplazamiento <----- */
+
+::-webkit-scrollbar {
+    width: 10px; 
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(50, 50, 50);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(123, 123, 123); 
+    border-radius: 10px;
+}
+
+/* -----> **************************************** <----- */

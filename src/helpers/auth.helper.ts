@@ -43,4 +43,3 @@ export async function login(userData: ILoginProps) {
         throw new Error(error)
     }
 };
-

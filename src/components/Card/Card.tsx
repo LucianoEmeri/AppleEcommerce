@@ -49,14 +49,14 @@ const Card: React.FC<ICardProps> = ({ name, price, image, stock }) => {
         </div>
       </div>
       <div className="px-6 pb-6">
-        <p
+        <a
           href="#"
-          className="block text-center w-full text-white bg-gradient-to-r from-purple-900 to-blue-800 hover:bg-gradient-to-l focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 "
+          className="block text-center w-full text-white bg-gradient-to-r from-purple-900 to-blue-800 hover:bg-gradient-to-l focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5"
         >
-        <span className="transition duration-300 hover:scale-105 inline-block">
-          Detalle del producto
-        </span>
-        </p>
+          <span className="transition duration-300 hover:scale-105 inline-block">
+            Detalle del producto
+          </span>
+        </a>
       </div>
     </div>
   );

@@ -9,7 +9,8 @@ import { useAuth } from "@/context/AuthContext";
 import Swal from "sweetalert2";
 
 const Orders = () => {
-  const { userData, orders, setOrders, removeOrder } = useAuth();
+  const { userData, setOrders, getToken } = useAuth();  // Usar AuthContext para obtener userData y getToken
+  const [orders, setLocalOrders] = useState<IOrder[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,13 +22,29 @@ const Orders = () => {
   }, [userData, router]);
 
   const fetchData = async () => {
-    if (userData?.token) {
-      const ordersResponse = await getOrders(userData.token);
-      setOrders(ordersResponse);
+    const token = getToken();
+    if (token) {
+      try {
+        const ordersResponse = await getOrders(token);
+        console.log("Orders response:", ordersResponse);  // Depuración
+        setLocalOrders(ordersResponse);
+        setOrders(ordersResponse);  // Actualizar el contexto si es necesario
+      } catch (error) {
+        console.error("Error al obtener las órdenes:", error);
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudieron obtener las órdenes. Inténtalo de nuevo más tarde.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#4A1D96',
+          background: 'rgba(0, 0, 0, 0.9)',
+          color: '#f3f4f6'
+        });
+      }
     }
   }
 
-  const handleCancelOrder = (orderId: string) => {
+  const handleCancelOrder = (orderId: number) => {  // Cambiar `orderId` a tipo `number`
     Swal.fire({
       title: `¿Estás seguro de que deseas cancelar la orden ${orderId}?`,
       icon: "question",
@@ -43,7 +60,8 @@ const Orders = () => {
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        removeOrder(orderId);
+        // Simula la eliminación de la orden
+        setLocalOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
 
         Swal.fire({
           title: '¡Orden cancelada!',
@@ -68,7 +86,7 @@ const Orders = () => {
               <p className="text-gray-500">Estado: {order.status.toLocaleUpperCase()}</p>
             </div>
             <button
-              onClick={() => handleCancelOrder(order.id.toString())}  // Convertir `order.id` a string
+              onClick={() => handleCancelOrder(order.id)}
               className="bg-gradient-to-r from-purple-900 to-blue-800 text-white hover:bg-gradient-to-l focus:outline-none py-2 px-4 font-bold uppercase text-xs rounded transition duration-300 transform hover:scale-105 mt-2 md:mt-0 md:ml-4 w-full md:w-auto"
             >
               <span className="transition duration-300 hover:scale-105 inline-block">

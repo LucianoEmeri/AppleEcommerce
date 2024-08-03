@@ -21,15 +21,30 @@ const products = [
 ];
 
 const Navbar = () => {
-    const {userData} = useAuth()
+    const { userData } = useAuth();
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [windowSize, setWindowSize] = useState([1200, 800]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredProducts, setFilteredProducts] = useState(products);
     const [selectedProductIndex, setSelectedProductIndex] = useState(-1);
     const [showCategories, setShowCategories] = useState(window.innerWidth >= 720);
     const searchDropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setShowCategories(window.innerWidth >= 720);
+            if (window.innerWidth < 720) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        window.addEventListener("resize", handleResize);
+        handleResize(); // Set the initial value based on the current window size
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         if (searchTerm) {
@@ -52,23 +67,6 @@ const Navbar = () => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    const windowSizeHandler = () => {
-        setWindowSize([window.innerWidth, window.innerHeight]);
-        if (window.innerWidth >= 720) {
-            setIsMenuOpen(false);
-            setShowCategories(true);
-        } else {
-            setShowCategories(false);
-        }
-    };
-
-    useEffect(() => {
-        window.addEventListener("resize", windowSizeHandler);
-        return () => {
-            window.removeEventListener("resize", windowSizeHandler);
         };
     }, []);
 
@@ -107,7 +105,6 @@ const Navbar = () => {
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
-        setShowCategories(!showCategories);
     };
 
     return (

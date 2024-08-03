@@ -1,5 +1,4 @@
-'use client';
-
+'use client'
 import { IUserSession, IOrder } from "@/interfaces/Types";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -10,6 +9,7 @@ export interface AuthContextProps {
     orders: IOrder[];
     setOrders: (orders: IOrder[]) => void;
     removeOrder: (orderId: string) => void;
+    getToken: () => string | undefined;  // Nueva función para obtener el token
 }
 
 export const AuthContext = createContext<AuthContextProps>({
@@ -18,7 +18,8 @@ export const AuthContext = createContext<AuthContextProps>({
     logout: () => {},
     orders: [],
     setOrders: () => {},
-    removeOrder: () => {}
+    removeOrder: () => {},
+    getToken: () => undefined,  // Inicialmente retorna undefined
 });
 
 export interface AuthProviderProps {
@@ -53,8 +54,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setOrders(prevOrders => prevOrders.filter(order => order.id !== orderId));
     };
 
+    const getToken = () => {
+        return userData?.token;
+    };
+
     return (
-        <AuthContext.Provider value={{ userData, setUserData, logout, orders, setOrders, removeOrder }}>
+        <AuthContext.Provider value={{ userData, setUserData, logout, orders, setOrders, removeOrder, getToken }}>
             {children}
         </AuthContext.Provider>
     );
